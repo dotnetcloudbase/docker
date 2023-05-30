@@ -1,0 +1,16 @@
+version: "3.2"
+
+services:
+  test:
+    image: crazymax/loop
+    environment:
+      - DURATION=58s
+    deploy:
+      mode: replicated
+      replicas: 0
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=0/30 * 9-15 * * 1-5"
+        - "swarm.cronjob.skip-running=true"
+      restart_policy:
+        condition: none

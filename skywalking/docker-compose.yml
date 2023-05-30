@@ -1,0 +1,46 @@
+version: '3.3'
+services:
+  oap:
+    image: apache/skywalking-oap-server:9.4.0
+    container_name: skywaling-oap
+    networks:
+      - opensearch
+    external_links:
+      - opensearch
+    restart: always
+    ports:
+      - 11800:11800 # agent 上报数据 gRPC 端口
+      - 12800:12800 # ui 读取数据 http 端口
+    #volumes:
+    #  - ./config:/skywalking/config
+    environment:
+      TZ: "Asia/Shanghai"
+      SW_STORAGE: elasticsearch
+      SW_NAMESPACE: sk-opensearch
+      SW_STORAGE_ES_CLUSTER_NODES: opensearch:9200
+      SW_STORAGE_ES_ADVANCED: "{\"index.translog.durability\":\"request\",\"index.translog.sync_interval\":\"5s\"}"
+      SW_STORAGE_ES_INDEX_SHARDS_NUMBER: 2
+      SW_STORAGE_ES_BULK_ACTIONS: 2000
+      SW_STORAGE_ES_BULK_SIZE: 20
+      SW_STORAGE_ES_FLUSH_INTERVAL: 10
+      SW_STORAGE_ES_CONCURRENT_REQUESTS: 2
+      SW_STORAGE_DAY_STEP: 15
+      SW_CORE_RECORD_DATA_TTL: 15
+      SW_CORE_METRICS_DATA_TTL: 20
+
+  skywaling-ui:
+    image: apache/skywalking-ui:9.4.0
+    container_name: skywaling-ui
+    depends_on:
+      - oap
+    links:
+      - oap
+    ports:
+      - 9090:8080
+    environment:
+      SW_OAP_ADDRESS: http://oap:12800
+      SW_TIMEOUT: 5000
+
+networks:
+  opensearch:
+    external: true

@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  influxdb:
+    image: influxdb
+    restart: always
+    container_name: "influxdb"
+    # command: /usr/bin/influx
+    ports:
+      - 8083:8083
+      - 8086:8086
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "10m"
+    volumes:
+      - ./conf/influxdb.conf:/etc/influxdb/influxdb.conf 
+      - ./data:/var/lib/influxdb/data 
+      - ./meta:/var/lib/influxdb/meta 
+      - ./wal:/var/lib/influxdb/wal
+      # - /etc/localtime:/etc/localtime
+    environment:
+      # - ADMIN_USER = "root"
+      # - INFLUXDB_INIT_PWD = "root"
+      # - PRE_CREATE_DB = "changtest"
+      # - INFLUXDB_ADMIN_ENABLED:"true" 
+      - TZ=Asia/Shanghai

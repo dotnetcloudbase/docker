@@ -1,0 +1,14 @@
+version: '2'
+services:
+  mongodb:
+    image: mongo
+    ports:
+        - 27017:27017
+    volumes:
+        - "./data/configdb:/data/configdb"
+        - "./data/db:/data/db"
+    command: mongod --auth
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root       #初始化管理员用户名和密码
+      - MONGO_INITDB_ROOT_PASSWORD=changyw
+    tty: true

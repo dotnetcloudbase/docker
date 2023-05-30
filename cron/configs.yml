@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  test:
+    image: mysql:5.7
+    command: cat /app/config.txt
+    deploy:
+      mode: replicated
+      replicas: 0
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=* * * * *"
+        - "swarm.cronjob.skip-running=false"
+      restart_policy:
+        condition: none
+    configs:
+      - source: my_config
+        target: /app/config.txt
+
+configs:
+  my_config:
+    file: ./config.txt

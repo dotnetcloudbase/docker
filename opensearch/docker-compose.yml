@@ -1,0 +1,36 @@
+version: '3.3'
+services:
+  opensearch:
+    image: opensearchproject/opensearch:1
+    container_name: opensearch
+    environment:
+      - "TZ=Asia/Shanghai"
+      - "cluster.name=opensearch"
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms256M -Xmx521M"
+    volumes:
+      - ./config:/usr/share/opensearch/config
+      - ./data:/usr/share/opensearch/data
+    ports:
+      - 9200:9200
+    restart: always
+    networks:
+      - opensearch
+
+  dejavu:
+    image: appbaseio/dejavu:3.6.0
+    container_name: dejavu
+    depends_on:
+      - opensearch
+    ports:
+        - '9800:1358'
+    links: 
+      - opensearch
+    networks:
+      - opensearch
+    environment:
+      - "TZ=Asia/Shanghai"
+
+networks:
+  opensearch: 
+    external: true

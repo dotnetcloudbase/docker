@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  mysql57:
+    image: mysql:5.7
+    ports: 
+      - 3333:3306
+    environment: 
+      MYSQL_ROOT_PASSWORD: "changyw123" 
+    command: data
+    deploy:
+      mode: replicated
+      replicas: 0
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=* * * * *"
+        - "swarm.cronjob.skip-running=false"
+          #constraints:
+          #- node.hostname==server1
+      restart_policy:
+        #condition: on-failure
+        condition: none 
+    volumes:
+      - /cronjob/mysql/data:/var/lib/mysql
+
+  dbAdminer:
+    image: adminer
+    ports:
+      - 6606:8080
+    deploy:
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=* * * * *"
+        - "swarm.cronjob.skip-running=false"
+          #placement:
+              #constraints:
+              #- node.hostname==server1
+      restart_policy:
+        #condition: on-failure
+        condition: none 

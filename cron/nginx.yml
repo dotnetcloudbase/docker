@@ -1,0 +1,87 @@
+version: "3.2"
+
+services:
+  nginx:
+    image: nginx
+    command: echo "nginx is starting!"
+    ports:
+        - 80:80
+        - 443:443
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+        - /cronjob/nginx/conf.d:/etc/nginx/conf.d
+        - /cronjob/nginx/log:/var/log/nginx
+        - /cronjob/nginx/www:/etc/nginx/html
+        - /cronjob/nginx/letsencrypt:/etc/letsencrypt
+    deploy:
+      mode: replicated
+      replicas: 0
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=* * * * *"
+        - "swarm.cronjob.skip-running=false"
+      restart_policy:
+        condition: none
+
+  mysql:
+    image: mysql:8
+    # container_name: mysql8
+    ports:
+      - "3306:3306"
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+      --default-time-zone=+8:00
+    environment:
+      MYSQL_ROOT_PASSWORD: "password" 
+    volumes:
+      - "/cronjob/mysql/db:/var/lib/mysql"
+      - "/cronjob/mysql/conf/my.cnf:/etc/my.cnf"
+    deploy:
+      mode: replicated
+      replicas: 0
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=* * * * *"
+        - "swarm.cronjob.skip-running=false"
+      restart_policy:
+        condition: none
+  
+  redis:
+    image: redis
+    # container_name: redis
+    environment:
+      - TZ=Asia/Shanghai
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    volumes:
+      - /cronjob/redis/data:/data
+      - /cronjob/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    deploy:
+      mode: replicated
+      replicas: 0
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=* * * * *"
+        - "swarm.cronjob.skip-running=false"
+      restart_policy:
+        condition: none
+
+  dbAdminer:
+    image: adminer
+    ports:
+      - 8888:8080
+    deploy:
+      mode: replicated
+      replicas: 0
+      labels:
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=* * * * *"
+        - "swarm.cronjob.skip-running=false"
+      restart_policy:
+        condition: none

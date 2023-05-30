@@ -1,16 +1,18 @@
 version: '3.7'
 services:
-  es:
-    image: elasticsearch:6.7.2
+  elasticsearch:
+    image: elasticsearch
     container_name: elasticsearch
     restart: always
     environment:
       # - node.name=es01
       # - cluster.name=tres
+      - "ES_JAVA_OPTS=-Xms256m -Xmx512m"
       - "discovery.type=single-node"
     volumes:
       - ./data:/usr/share/elasticsearch/data
-      - ./config_copy:/usr/share/elasticsearch/config
-    ports:
-      - "9200:9200"
-      - "9300:9300"
+      - ./config:/usr/share/elasticsearch/config
+    ports:    
+      - '9200:9200'     #java、集群通信端口
+      - '9300:9300'     #http通信端口
+    privileged: true    #环境变量
