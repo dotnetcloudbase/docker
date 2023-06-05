@@ -14,4 +14,10 @@ services:
     - ./data:/var/lib/mysql
     - ./conf/my.cnf:/etc/my.cnf
     restart: always
-    network_mode: "bridge"
+    networks:
+      - mysql_net
+    
+networks:
+  mysql_net:
+    name: mysql_net
+    driver: bridge

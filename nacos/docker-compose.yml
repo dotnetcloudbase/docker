@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  nacos:
+    image: nacos/nacos-server:v2.2.2
+    container_name: nacos
+    restart: always
+    environment:
+      PREFER_HOST_MODE: hostname #如果支持主机名可以使用hostname,否则使用ip，默认也是ip
+      SPRING_DATASOURCE_PLATFORM: mysql #数据源平台 仅支持mysql或不保存empty
+      MODE: standalone
+      MYSQL_SERVICE_HOST: mysql
+      MYSQL_SERVICE_DB_NAME: nacos
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: changyw
+      MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false
+      NACOS_APPLICATION_PORT: 9999
+      NACOS_CORE_AUTH_ENABLED: true
+      NACOS_AUTH_SYSTEM_TYPE: nacos
+
+      # JVM_XMS: 512m
+      # JVM_MMS: 320m
+    ports:
+      - 9999:9999
+    volumes:
+      - ./data/standalone-logs/:/home/nacos/logs
+      # - ./data/init.d/custom.properties:/home/nacos/init.d/custom.properties
+      - ./conf/application.properties:/home/nacos/conf/application.properties:rw
+      # - ./data/conf:/home/nacos/conf
+    external_links:
+      - mysql:mysql
+    networks:
+      - mysql_net
+
+networks: #配置和mysql容器互通的网络net-docker
+  mysql_net:
+    external: true
