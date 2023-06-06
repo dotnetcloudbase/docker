@@ -38,6 +38,7 @@ nbdist/
 .DS_Store
 *.log
 *.xml.versionsBackup
+*/data/*
 
 !*/build/*.java
 !*/build/*.html
