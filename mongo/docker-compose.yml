@@ -1,14 +1,24 @@
-version: '2'
+version: '3.6'
 services:
   mongodb:
     image: mongo
+    container_name: mongo
     ports:
         - 27017:27017
     volumes:
         - "./data/configdb:/data/configdb"
         - "./data/db:/data/db"
+        - "./data/backup:/data/backup"
     command: mongod --auth
     environment:
+      - TZ=Asia/Shanghai
+      - MONGO_INITDB_DATABASE=admin
       - MONGO_INITDB_ROOT_USERNAME=root       #初始化管理员用户名和密码
       - MONGO_INITDB_ROOT_PASSWORD=changyw
+    networks:
+      - mongo_net
     tty: true
+
+networks:
+  mongo_net:
+    driver: bridge
