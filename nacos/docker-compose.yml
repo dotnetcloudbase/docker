@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   nacos:
-    image: nacos/nacos-server:v2.2.2
+    image: nacos/nacos-server:v2.2.3
     container_name: nacos
     restart: always
     environment:
@@ -15,14 +15,17 @@ services:
       MYSQL_SERVICE_USER: root
       MYSQL_SERVICE_PASSWORD: changyw
       MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false
-      NACOS_APPLICATION_PORT: 9999
+      NACOS_APPLICATION_PORT: 8848
       NACOS_CORE_AUTH_ENABLED: true
+      NACOS_AUTH_IDENTITY_KEY: 123
+      NACOS_AUTH_IDENTITY_VALUE: 123
       NACOS_AUTH_SYSTEM_TYPE: nacos
 
       # JVM_XMS: 512m
       # JVM_MMS: 320m
     ports:
-      - 9999:9999
+      - 9999:8848
+      - 9848:9848
     volumes:
       - ./data/standalone-logs/:/home/nacos/logs
       # - ./data/init.d/custom.properties:/home/nacos/init.d/custom.properties
